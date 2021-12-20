@@ -8,15 +8,16 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
+use PHPUnit\Framework\TestCase;
 
-class HmiTestAdapter
+class HmiTest extends TestCase
 {
 	/** @var RemoteWebDriver */
 	public $driver;
 
-	public function __construct($browserName)
+	public function createDriver($browserName)
 	{
-		$serverUrl = 'http://localhost:4444/wd/hub';
+		$serverUrl = 'http://localhost:4444/';
 		switch ($browserName) {
 			case 'chrome':
 				$this->driver = RemoteWebDriver::create($serverUrl, DesiredCapabilities::chrome());
@@ -47,9 +48,17 @@ class HmiTestAdapter
 
 	public function getDriver()
 	{
+		if (empty($this->driver)) {
+			throw new \Exception('You need to call "createDriver" before invoke this method!');
+		}
 		return $this->driver;
 	}
 
+	/**
+	 * @param WebDriverElement $element
+	 * @param int $timeout
+	 * @return WebDriverElement
+	 */
 	public function whenVisible(WebDriverElement $element, $timeout = 10)
 	{
 		$this->driver->wait($timeout)->until(WebDriverExpectedCondition::visibilityOf($element));
@@ -59,6 +68,10 @@ class HmiTestAdapter
 	public function whenClickable($id, $timeout = 10)
 	{
 		$this->driver->wait($timeout)->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($id)));
+	}
+
+	public function navigate($url) {
+		$this->driver->get($url);
 	}
 
 	public function findElement($selector)
@@ -71,11 +84,13 @@ class HmiTestAdapter
 		return $this->driver->findElements(WebDriverBy::cssSelector($selector));
 	}
 
-	public function elementIsPresent() {
+	public function elementIsPresent()
+	{
 
 	}
 
-	public function fillTextInput() {
+	public function fillTextInput()
+	{
 
 	}
 
