@@ -1,2 +1,2 @@
 # php-selenium
-End-to-end tests using selenium
+End-to-end tests using selenium.
